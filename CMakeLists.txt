@@ -191,8 +191,5 @@ include_directories(
 add_executable(cardkey src/cardkey.cpp)
 target_link_libraries(cardkey ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
-add_executable(mail_writer src/mail_writer.cpp)
-target_link_libraries(mail_writer ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-
 add_executable(cardkey_sound src/cardkey_sound.cpp)
 target_link_libraries(cardkey_sound ${catkin_LIBRARIES})
