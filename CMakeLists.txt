@@ -5,8 +5,10 @@ project(cardkey)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  cv_bridge
   roscpp
   rospy
+  image_transport
   sound_play
   std_msgs
 )
@@ -195,6 +197,3 @@ target_link_libraries(cardkey ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 add_executable(cardkey_sound src/cardkey_sound.cpp)
 target_link_libraries(cardkey_sound ${catkin_LIBRARIES})
-
-add_executable(cardkey_textdetector src/cardkey_textdetector.cpp)
-target_link_libraries(cardkey_textdetector lept tesseract ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})

@@ -23,6 +23,8 @@
     <param name="baud" value="57600"/>
   </node>
 
+  <!--node pkg="cardkey" type="cardkey_textdetector" name="cardkey_detector" output="screen"/-->
+
   <node pkg="cardkey" type="cardkey_sound" name="cardkey_sound"/>
 
   <node name="soundplay_node" pkg="sound_play" type="soundplay_node.py"/>
