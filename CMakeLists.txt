@@ -196,5 +196,5 @@ target_link_libraries(cardkey ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_executable(cardkey_sound src/cardkey_sound.cpp)
 target_link_libraries(cardkey_sound ${catkin_LIBRARIES})
 
-add_executable(ocr src/ocr.cpp)
-target_link_libraries(ocr ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_executable(cardkey_textdetector src/cardkey_textdetector.cpp)
+target_link_libraries(cardkey_textdetector lept tesseract ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
