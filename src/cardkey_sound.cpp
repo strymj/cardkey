@@ -10,7 +10,7 @@
 using namespace std;
 
 bool flag_ring = false;/*{{{*/
-string folder = "/home/meco/catkin_ws/src/qrkey/sounds/";
+string folder = "/home/meco/catkin_ws/src/cardkey/sounds/";
 string file = "";
 string kakutyoushi = ".wav";
 
