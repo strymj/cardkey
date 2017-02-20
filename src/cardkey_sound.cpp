@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <sound_play/SoundRequest.h>
 #include <std_msgs/String.h>
-#include "kbhit.h"
 
 #define LOOPRATE 10/*}}}*/
 

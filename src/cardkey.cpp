@@ -5,12 +5,11 @@
 #include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float32MultiArray.h>
-#include <time.h>
-#include "kbhit.h"/*}}}*/
+#include <time.h>/*}}}*/
 
 #define PI 3.14159     // rad/*{{{*/
 #define LOOPRATE 10    // Hz
-#define W_TIME 10      // sec
+#define W_TIME 5       // sec
 #define PWM_CENTER 1500
 #define PWM_90 950
 #define TILT_RANGE 30  // deg
@@ -36,7 +35,6 @@ class Qrk/*{{{*/
 {
 	private:
 		void init();
-		void mf_change();
 		void status_disp();
 		void operate();
 		void say_word_m();
@@ -57,7 +55,7 @@ class Qrk/*{{{*/
 		Qrk()
 		{
 			time(&timer);
-			mf = true;
+			nh.param("male_voice", mf, true);
 			object_sub = nh.subscribe("/objects",1,objectCallback);
 			servo_pub = nh.advertise<std_msgs::Int32>("/servoPWM",1);
 			ring_pub = nh.advertise<std_msgs::String>("/file_name",1);
@@ -86,19 +84,6 @@ void Qrk::status_disp()/*{{{*/
 		servo_pub.publish(servoPWM);
 	}
 }/*}}}*/
-
-void Qrk::mf_change()
-{
-	if (kbhit()) {
-		short int key;
-		key = getchar();
-		switch (key) {
-			case 'c':
-				mf = !mf;
-				break;
-		}
-	}
-}
 
 void Qrk::say_word_m()/*{{{*/
 {
@@ -197,7 +182,6 @@ void Qrk::spin()/*{{{*/
 	{
 		init();
 		ros::spinOnce();
-		mf_change();
 		status_disp();
 		operate();
 		loop_rate.sleep();
