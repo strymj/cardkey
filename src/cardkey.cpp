@@ -55,7 +55,7 @@ class Qrk/*{{{*/
 		Qrk()
 		{
 			time(&timer);
-			nh.param("male_voice", mf, true);
+			nh.param("/cardkey/male_voice", mf, true);
 			object_sub = nh.subscribe("/objects",1,objectCallback);
 			servo_pub = nh.advertise<std_msgs::Int32>("/servoPWM",1);
 			ring_pub = nh.advertise<std_msgs::String>("/file_name",1);
@@ -79,6 +79,7 @@ void Qrk::status_disp()/*{{{*/
 		cout<<"          加藤研へようこそ！"<<endl<<endl;
 		cout<<"         waiting ID card ..."<<endl<<endl;
 		cout<<"========================================"<<endl;
+		cout<<"mf :"<<mf<<endl;
 
 		servoPWM.data = PWM_CENTER;
 		servo_pub.publish(servoPWM);

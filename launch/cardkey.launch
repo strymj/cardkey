@@ -4,7 +4,7 @@
 
 	<node pkg="cardkey" type="cardkey" name="cardkey" output="screen" >
 		<!-- change here for select voice -->
-		<param name="male_voice" value="true">
+		<param name="male_voice" value="true" />
 	</node>
 
 	<node pkg="usb_cam" type="usb_cam_node" name="usb_cam">      
