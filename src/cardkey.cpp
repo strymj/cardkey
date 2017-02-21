@@ -129,7 +129,7 @@ void Qrk::say_oc()
 
 void Qrk::key_operate()/*{{{*/
 {
-	if (object_pose > 0){
+	if (0 <= object_pose){
 		cout<<endl;
 		cout<<"========================================"<<endl<<endl<<endl;
 		cout<<"           ############"<<endl;
