@@ -19,14 +19,14 @@ using namespace std;/*{{{*/
 
 double roll=0.0, pitch = 0.0, yaw = 0.0;
 string inputcode = "nodata";
-int object_num = 0;
+bool object = false;
 float object_pose = 0.0;
 double deg_z;/*}}}*/
 
 void objectCallback(const std_msgs::Float32MultiArray &msg)/*{{{*/
 {
 	if (msg.data.size()) {
-		object_num = (int)msg.data[0];
+		object = true;
 		object_pose = msg.data[3];
 	}
 }/*}}}*/
@@ -34,9 +34,7 @@ void objectCallback(const std_msgs::Float32MultiArray &msg)/*{{{*/
 class Qrk/*{{{*/
 {
 	private:
-		void init();
 		void status_disp();
-		void operate();
 		void say_word_m();
 		void say_word_f();
 		void say_oc();
@@ -62,14 +60,10 @@ class Qrk/*{{{*/
 		}
 };/*}}}*/
 
-void Qrk::init()/*{{{*/
-{
-	object_num = 0;
-	object_pose = 0.0;
-}/*}}}*/
-
 void Qrk::status_disp()/*{{{*/
 {
+	static int count = 0;
+	static int send_interval = 5;
 	if (timer != time(NULL)) {
 		time(&timer);
 		now = localtime(&timer);
@@ -79,10 +73,12 @@ void Qrk::status_disp()/*{{{*/
 		cout<<"          加藤研へようこそ！"<<endl<<endl;
 		cout<<"         waiting ID card ..."<<endl<<endl;
 		cout<<"========================================"<<endl;
-		cout<<"mf :"<<mf<<endl;
 
-		servoPWM.data = PWM_CENTER;
-		servo_pub.publish(servoPWM);
+		count = (count+1)%send_interval;
+		if(count == 0) {
+			servoPWM.data = PWM_CENTER;
+			servo_pub.publish(servoPWM);
+		}
 	}
 }/*}}}*/
 
@@ -163,28 +159,23 @@ void Qrk::key_operate()/*{{{*/
 	ros::spinOnce();
 }/*}}}*/
 
-void Qrk::operate()/*{{{*/
-{
-	if (object_num) {
-		if(mf) {
-			say_word_m();
-		} else {
-			say_word_f();
-		}
-		say_oc();
-		key_operate();
-	}
-}/*}}}*/
-
 void Qrk::spin()/*{{{*/
 {
 	ros::Rate loop_rate(LOOPRATE);
 	while (ros::ok())
 	{
-		init();
+		object = false;
 		ros::spinOnce();
 		status_disp();
-		operate();
+		if (object) {
+			if(mf) {
+				say_word_m();
+			} else {
+				say_word_f();
+			}
+			say_oc();
+			key_operate();
+		}
 		loop_rate.sleep();
 
 	}
