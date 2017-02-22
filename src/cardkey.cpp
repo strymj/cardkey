@@ -3,30 +3,25 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <tf/transform_datatypes.h>
 #include <std_msgs/Int32.h>
-#include <std_msgs/String.h>
 #include <std_msgs/Float32MultiArray.h>
+#include <sound_play/SoundRequest.h>
 #include <time.h>/*}}}*/
 
-#define PI 3.14159     // rad/*{{{*/
 #define LOOPRATE 10    // Hz
 #define W_TIME 5       // sec
 #define PWM_CENTER 1500
 #define PWM_90 950
 #define TILT_RANGE 30  // deg
-const double RAD2DEG = 180.0 / PI;/*}}}*/
 
 using namespace std;/*{{{*/
 
-double roll=0.0, pitch = 0.0, yaw = 0.0;
-string inputcode = "nodata";
-bool object = false;
+bool object_exist = false;
 float object_pose = 0.0;
-double deg_z;/*}}}*/
 
 void objectCallback(const std_msgs::Float32MultiArray &msg)/*{{{*/
 {
 	if (msg.data.size()) {
-		object = true;
+		object_exist = true;
 		object_pose = msg.data[3];
 	}
 }/*}}}*/
@@ -35,30 +30,53 @@ class Qrk/*{{{*/
 {
 	private:
 		void status_disp();
-		void say_word_m();
-		void say_word_f();
-		void say_oc();
+		void sayword_male();
+		void sayword_female();
+		void openclose_sound();
 		void key_operate();
+		void publish_servoPWM(int);
+		void publish_sound(string);
 		time_t timer;
-		bool mf;
+		bool malevoice_flag;
 		tm *now;
-	public:
-		void spin();
+		string folder;
+
 		ros::NodeHandle nh;
 		ros::Subscriber object_sub;
 		std_msgs::Int32 servoPWM;
 		ros::Publisher servo_pub;
-		std_msgs::String ring_msg;
-		ros::Publisher ring_pub;
+		sound_play::SoundRequest sound_msg;
+		ros::Publisher sound_pub;
+
+	public:
+		void spin();
 		Qrk()
 		{
 			time(&timer);
-			nh.param("/cardkey/male_voice", mf, true);
+			nh.param("/cardkey/male_voice", malevoice_flag, true);
+			nh.param("/cardkey/soundpath", folder, string(""));
 			object_sub = nh.subscribe("/objects",1,objectCallback);
 			servo_pub = nh.advertise<std_msgs::Int32>("/servoPWM",1);
-			ring_pub = nh.advertise<std_msgs::String>("/file_name",1);
+			sound_pub = nh.advertise<sound_play::SoundRequest>("/robotsound", 1);
+			sound_msg.sound = -2;	
+			sound_msg.command = 1;
+			sound_msg.volume = 1.0;
+			sound_msg.arg = "";
+			sound_msg.arg2 = "";
 		}
 };/*}}}*/
+
+void Qrk::publish_sound(string filename)
+{
+	sound_msg.arg = folder + filename;
+	sound_pub.publish(sound_msg);
+}
+
+void Qrk::publish_servoPWM(int value)
+{
+	servoPWM.data = value;
+	servo_pub.publish(servoPWM);
+}
 
 void Qrk::status_disp()/*{{{*/
 {
@@ -76,55 +94,49 @@ void Qrk::status_disp()/*{{{*/
 
 		count = (count+1)%send_interval;
 		if(count == 0) {
-			servoPWM.data = PWM_CENTER;
-			servo_pub.publish(servoPWM);
+			publish_servoPWM(PWM_CENTER);
 		}
 	}
 }/*}}}*/
 
-void Qrk::say_word_m()/*{{{*/
+void Qrk::sayword_male()/*{{{*/
 {
 	if (object_pose > 0){
-		ring_msg.data = "irassyai";
+		publish_sound("irassyai.wav");
 	}
 	else if (object_pose < 0) {
-		ring_msg.data = "haisainara";
+		publish_sound("haisainara.wav");
 	}
-
-	ring_pub.publish(ring_msg);
 	sleep(2);
 }/*}}}*/
 
-void Qrk::say_word_f()/*{{{*/
+void Qrk::sayword_female()/*{{{*/
 {
 	if (object_pose > 0){
 		if (4 <=  now->tm_hour && now->tm_hour < 11) {
-			ring_msg.data = "ohayougozaimasu";
+			publish_sound("ohayougozaimasu.wav");
 		}
 		else if (11 <=  now->tm_hour && now->tm_hour < 18) {
-			ring_msg.data = "konnichiha";
+			publish_sound("konnichiha.wav");
 		}
 		else if (18 <=  now->tm_hour || now->tm_hour < 4) {
-			ring_msg.data = "konbanha";
+			publish_sound("konbanha.wav");
 		}
 	}
 	else if (object_pose < 0) {
-		ring_msg.data = "otsukaresamadeshita";
+		publish_sound("otsukaresamadeshita.wav");
 	}
-
-	ring_pub.publish(ring_msg);
 	sleep(2);
 }/*}}}*/
 
-void Qrk::say_oc()
+void Qrk::openclose_sound()
 {
 	if (object_pose > 0) {
-		ring_msg.data = "open";
+		publish_sound("open.wav");
 	}
 	else if (object_pose < 0) {
-		ring_msg.data = "close";
+		publish_sound("close.wav");
 	}
-	ring_pub.publish(ring_msg);
 }
 
 void Qrk::key_operate()/*{{{*/
@@ -137,7 +149,7 @@ void Qrk::key_operate()/*{{{*/
 		cout<<"           ############"<<endl<<endl<<endl;
 		cout<<"========================================"<<endl;
 
-		servoPWM.data = PWM_CENTER - PWM_90;
+		publish_servoPWM(PWM_CENTER - PWM_90);
 
 	}
 	else if (object_pose < 0){
@@ -148,13 +160,11 @@ void Qrk::key_operate()/*{{{*/
 		cout<<"           #############"<<endl<<endl<<endl;
 		cout<<"========================================"<<endl;
 
-		servoPWM.data = PWM_CENTER + PWM_90;
+		publish_servoPWM(PWM_CENTER + PWM_90);
 	}
 
-	servo_pub.publish(servoPWM);
 	sleep(1);
-	servoPWM.data = PWM_CENTER;
-	servo_pub.publish(servoPWM);
+	publish_servoPWM(PWM_CENTER);
 	sleep(3);
 	ros::spinOnce();
 }/*}}}*/
@@ -164,16 +174,16 @@ void Qrk::spin()/*{{{*/
 	ros::Rate loop_rate(LOOPRATE);
 	while (ros::ok())
 	{
-		object = false;
+		object_exist = false;
 		ros::spinOnce();
 		status_disp();
-		if (object) {
-			if(mf) {
-				say_word_m();
+		if (object_exist) {
+			if(malevoice_flag) {
+				sayword_male();
 			} else {
-				say_word_f();
+				sayword_female();
 			}
-			say_oc();
+			openclose_sound();
 			key_operate();
 		}
 		loop_rate.sleep();

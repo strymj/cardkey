@@ -5,13 +5,14 @@
 	<node pkg="cardkey" type="cardkey" name="cardkey" output="screen" >
 		<!-- change here for select voice -->
 		<param name="male_voice" value="true" />
+		<param name="soundpath" value="/home/meco/catkin_ws/src/cardkey/sounds/" />
 	</node>
 
 	<node pkg="usb_cam" type="usb_cam_node" name="usb_cam">      
 		<param name="image_width" value="320" />
 		<param name="image_height" value="240" />
 		<param name="framerate" value="3" />
-		<param name="video_device" value="/dev/video1" />      
+		<param name="video_device" value="/dev/video0" />      
 		<param name="pixel_format" value="yuyv" />
 		<param name="camera_name" value="/usb_cam/image_raw" />
 	</node>
@@ -28,9 +29,6 @@
 		<param name="baud" value="57600"/>
 	</node>
 
-	<!--node pkg="cardkey" type="cardkey_textdetector" name="cardkey_detector" output="screen"/-->
-
-	<node pkg="cardkey" type="cardkey_sound" name="cardkey_sound"/>
-
 	<node name="soundplay_node" pkg="sound_play" type="soundplay_node.py"/>
+
 </launch>
