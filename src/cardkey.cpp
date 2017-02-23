@@ -13,20 +13,20 @@
 #define PWM_90 950
 #define TILT_RANGE 30  // deg
 
-using namespace std;/*{{{*/
+using namespace std;
 
 bool object_exist = false;
 float object_pose = 0.0;
 
-void objectCallback(const std_msgs::Float32MultiArray &msg)/*{{{*/
+void objectCallback(const std_msgs::Float32MultiArray &msg)
 {
 	if (msg.data.size()) {
 		object_exist = true;
 		object_pose = msg.data[3];
 	}
-}/*}}}*/
+}
 
-class Qrk/*{{{*/
+class Cardkey
 {
 	private:
 		void status_disp();
@@ -50,7 +50,7 @@ class Qrk/*{{{*/
 
 	public:
 		void spin();
-		Qrk()
+		Cardkey()
 		{
 			time(&timer);
 			nh.param("/cardkey/male_voice", malevoice_flag, true);
@@ -64,21 +64,21 @@ class Qrk/*{{{*/
 			sound_msg.arg = "";
 			sound_msg.arg2 = "";
 		}
-};/*}}}*/
+};
 
-void Qrk::publish_sound(string filename)
+void Cardkey::publish_sound(string filename)
 {
 	sound_msg.arg = folder + filename;
 	sound_pub.publish(sound_msg);
 }
 
-void Qrk::publish_servoPWM(int value)
+void Cardkey::publish_servoPWM(int value)
 {
 	servoPWM.data = value;
 	servo_pub.publish(servoPWM);
 }
 
-void Qrk::status_disp()/*{{{*/
+void Cardkey::status_disp()
 {
 	static int count = 0;
 	static int send_interval = 5;
@@ -97,9 +97,9 @@ void Qrk::status_disp()/*{{{*/
 			publish_servoPWM(PWM_CENTER);
 		}
 	}
-}/*}}}*/
+}
 
-void Qrk::sayword_male()/*{{{*/
+void Cardkey::sayword_male()
 {
 	if (object_pose > 0){
 		publish_sound("irassyai.wav");
@@ -108,9 +108,9 @@ void Qrk::sayword_male()/*{{{*/
 		publish_sound("haisainara.wav");
 	}
 	sleep(2);
-}/*}}}*/
+}
 
-void Qrk::sayword_female()/*{{{*/
+void Cardkey::sayword_female()
 {
 	if (object_pose > 0){
 		if (4 <=  now->tm_hour && now->tm_hour < 11) {
@@ -127,9 +127,9 @@ void Qrk::sayword_female()/*{{{*/
 		publish_sound("otsukaresamadeshita.wav");
 	}
 	sleep(2);
-}/*}}}*/
+}
 
-void Qrk::openclose_sound()
+void Cardkey::openclose_sound()
 {
 	if (object_pose > 0) {
 		publish_sound("open.wav");
@@ -139,7 +139,7 @@ void Qrk::openclose_sound()
 	}
 }
 
-void Qrk::key_operate()/*{{{*/
+void Cardkey::key_operate()
 {
 	if (0 <= object_pose){
 		cout<<endl;
@@ -167,9 +167,9 @@ void Qrk::key_operate()/*{{{*/
 	publish_servoPWM(PWM_CENTER);
 	sleep(3);
 	ros::spinOnce();
-}/*}}}*/
+}
 
-void Qrk::spin()/*{{{*/
+void Cardkey::spin()
 {
 	ros::Rate loop_rate(LOOPRATE);
 	while (ros::ok())
@@ -189,12 +189,12 @@ void Qrk::spin()/*{{{*/
 		loop_rate.sleep();
 
 	}
-}/*}}}*/
+}
 
-int main (int argc, char** argv)/*{{{*/
+int main (int argc, char** argv)
 {
 	ros::init(argc, argv, "qrkey");
-	Qrk qrk;
-	qrk.spin();
+	Cardkey cardkey;
+	cardkey.spin();
 	return 0;
-}/*}}}*/
+}

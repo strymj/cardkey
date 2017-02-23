@@ -21,27 +21,12 @@ include_directories(
 	${catkin_INCLUDE_DIRS}
 	)
 
-## Declare a C++ library
-# add_library(cardkey
-#   src/${PROJECT_NAME}/cardkey.cpp
-# )
-
-# target_link_libraries(cardkey_node
-#   ${catkin_LIBRARIES}
-# )
-
 
 add_executable(cardkey
 	src/cardkey.cpp
-	)
-add_executable(cardkey_sound
-	src/cardkey_sound.cpp
 	)
 
 target_link_libraries(cardkey
 	${catkin_LIBRARIES}
 	)
 
-target_link_libraries(cardkey_sound
-	${catkin_LIBRARIES}
-	)
