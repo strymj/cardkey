@@ -7,11 +7,10 @@
 #include <sound_play/SoundRequest.h>
 #include <time.h>/*}}}*/
 
-#define LOOPRATE 10    // Hz
-#define W_TIME 5       // sec
-#define PWM_CENTER 1500
-#define PWM_90 950
-#define TILT_RANGE 30  // deg
+#define LOOPRATE 10      // Hz
+#define W_TIME 5         // sec
+#define PWM_CENTER 1500  // us
+#define PWM_90_DEG 950   // us
 
 using namespace std;
 
@@ -149,7 +148,7 @@ void Cardkey::key_operate()
 		cout<<"           ############"<<endl<<endl<<endl;
 		cout<<"========================================"<<endl;
 
-		publish_servoPWM(PWM_CENTER - PWM_90);
+		publish_servoPWM(PWM_CENTER - PWM_90_DEG);
 
 	}
 	else if (object_pose < 0){
@@ -160,7 +159,7 @@ void Cardkey::key_operate()
 		cout<<"           #############"<<endl<<endl<<endl;
 		cout<<"========================================"<<endl;
 
-		publish_servoPWM(PWM_CENTER + PWM_90);
+		publish_servoPWM(PWM_CENTER + PWM_90_DEG);
 	}
 
 	sleep(1);
