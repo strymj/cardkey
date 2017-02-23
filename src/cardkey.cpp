@@ -1,11 +1,9 @@
-#include <ros/ros.h>/*{{{*/
-#include <iostream>
-#include <geometry_msgs/PoseStamped.h>
-#include <tf/transform_datatypes.h>
+#include <ros/ros.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/Float32MultiArray.h>
 #include <sound_play/SoundRequest.h>
-#include <time.h>/*}}}*/
+#include <iostream>
+#include <time.h>
 
 #define LOOPRATE 10      // Hz
 #define W_TIME 5         // sec
