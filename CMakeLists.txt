@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
 	)
 
 catkin_package(
-	INCLUDE_DIRS include
+	#INCLUDE_DIRS include
 	LIBRARIES cardkey
 	CATKIN_DEPENDS roscpp rospy sound_play std_msgs
 	DEPENDS system_lib
