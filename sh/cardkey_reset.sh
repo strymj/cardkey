@@ -1,7 +1,7 @@
 #!/bin/sh
 
 LOOP=0
-RESET_TIME="15:24"
+RESET_TIME="04:00"
 
 
 while :
