@@ -1,6 +1,6 @@
 #!/bin/sh
 
-password="Strymj7290"
+password="mec0"
 
 echo ${password} | sudo -S chmod a+rw /dev/ttyACM0 
 roslaunch cardkey cardkey.launch
