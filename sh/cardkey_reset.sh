@@ -3,8 +3,6 @@
 LOOP=0
 #RESET_TIME="04:00"
 
-gnome-terminal --geometry 40x11+0+0 -e 'bash -c "roslaunch cardkey usb_cam.launch"'
-
 while :
 do
 	gnome-terminal --geometry 40x11+1200+400 -e 'bash -c "sh ~/catkin_ws/src/cardkey/sh/cardkey.sh"'

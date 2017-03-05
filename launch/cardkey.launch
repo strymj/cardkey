@@ -8,6 +8,15 @@
 		<param name="soundpath" value="/home/meco/catkin_ws/src/cardkey/sounds/" />
 	</node>
 
+	<node pkg="usb_cam" type="usb_cam_node" name="usb_cam">      
+		<param name="image_width" value="320" />
+		<param name="image_height" value="240" />
+		<param name="framerate" value="2" />
+		<param name="video_device" value="/dev/video1" />      
+		<param name="pixel_format" value="yuyv" />
+		<param name="camera_name" value="/usb_cam/image_raw" />
+	</node>
+
 	<node name="find_object_2d" pkg="find_object_2d" type="find_object_2d" output="screen">
 		<remap from="image" to="/usb_cam/image_raw"/>
 		<param name="gui" value="true" type="bool"/>
