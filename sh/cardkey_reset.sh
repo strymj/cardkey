@@ -3,6 +3,7 @@
 LOOP=0
 #RESET_TIME="04:00"
 
+gnome-terminal --geometry 40x11+0+0 -e 'bash -c "roslaunch cardkey usb_cam.launch"'
 
 while :
 do
